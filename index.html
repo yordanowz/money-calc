@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yordanow Money Check</title>
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="moneycheck" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --space-bg: #030406;
+            --container-bg: rgba(10, 14, 23, 0.8);
+            --accent-neon: #a855f7;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --card-border: rgba(168, 85, 247, 0.2);
+            --input-bg: #111827;
+            --result-text: #ffffff;
+        }
+
+        [data-theme="light"] {
+            --space-bg: #f1f5f9;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --accent-neon: #7c3aed;
+            --accent-blue: #2563eb;
+            --text-main: #0f172a;
+            --text-dim: #64748b;
+            --card-border: rgba(0, 0, 0, 0.1);
+            --input-bg: #ffffff;
+            --result-text: #0f172a;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 15px var(--accent-neon)); }
+            50% { transform: translateY(-10px); filter: drop-shadow(0 0 25px var(--accent-neon)); }
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+            50% { text-shadow: 0 0 35px rgba(168, 85, 247, 0.7); }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--space-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            transition: all 0.4s ease;
+        }
+
+        .animate-item { opacity: 0; animation: fadeInUp 0.6s ease forwards; }
+
+        .theme-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: var(--container-bg); border: 1px solid var(--card-border);
+            color: var(--text-main); width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; backdrop-filter: blur(10px); display: flex; 
+            align-items: center; justify-content: center; z-index: 100;
+        }
+
+        .container {
+            width: 100%; max-width: 420px; padding: 35px;
+            background: var(--container-bg); backdrop-filter: blur(25px);
+            border-radius: 35px; border: 1px solid var(--card-border);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            text-align: center; position: relative;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .logo-img { width: 80px; animation: floatLogo 4s ease-in-out infinite; margin-bottom: 10px; }
+
+        h1 { 
+            font-size: 26px; font-weight: 800; margin: 15px 0 5px 0; 
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-neon)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+
+        .tag {
+            padding: 8px 14px; background: rgba(168, 85, 247, 0.05);
+            border: 1px solid var(--card-border); border-radius: 20px;
+            font-size: 11px; cursor: pointer; color: var(--text-dim); font-weight: 600;
+            transition: 0.3s;
+        }
+        .tag:hover { background: var(--accent-neon); color: white; transform: translateY(-3px); }
+
+        input, select {
+            width: 100%; padding: 15px; background: var(--input-bg) !important;
+            border: 1px solid var(--card-border); border-radius: 18px;
+            color: var(--text-main) !important; font-size: 16px; outline: none;
+            transition: 0.3s all; box-sizing: border-box;
+        }
+
+        input:focus, select:focus { border-color: var(--accent-neon); box-shadow: 0 0 18px rgba(168, 85, 247, 0.4); }
+
+        .amount-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        .amount-wrapper input { width: 140px; text-align: center; font-weight: 800; border-color: var(--accent-blue); }
+
+        .swap-btn {
+            background: var(--input-bg); border: 1px solid var(--accent-neon);
+            color: var(--accent-neon); width: 44px; height: 44px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            margin: -12px auto; position: relative; z-index: 10; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .swap-btn:hover { transform: rotate(180deg) scale(1.1); background: var(--accent-neon); color: white; }
+
+        .result-section {
+            margin-top: 30px; padding: 25px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border-radius: 28px; border: 1px solid var(--card-border);
+        }
+        .result-value { 
+            font-size: 40px; font-weight: 800; color: var(--result-text);
+            animation: neonPulse 3s infinite; transition: color 0.3s ease;
+        }
+
+        .nav-btn {
+            display: block; margin-top: 25px; padding: 18px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-neon));
+            color: white !important; text-decoration: none; border-radius: 20px;
+            font-weight: 800; transition: 0.3s; box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+        }
+        .nav-btn:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(168, 85, 247, 0.5); }
+    </style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-btn animate-item" onclick="toggleTheme()" style="animation-delay: 0.1s">🌓</button>
+
+<div class="container">
+    <div class="animate-item" style="animation-delay: 0.2s">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" class="logo-img">
+        <h1>Yordanow Money Check</h1>
+        <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Currency Tool</div>
+    </div>
+
+    <div class="animate-item" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; animation-delay: 0.3s">
+        <div class="tag" onclick="setQuick('BGN', 'EUR')">BGN ↔ EUR</div>
+        <div class="tag" onclick="setQuick('USD', 'BGN')">USD ↔ BGN</div>
+        <div class="tag" onclick="setQuick('EUR', 'USD')">EUR ↔ USD</div>
+    </div>
+
+    <div class="amount-wrapper animate-item" style="animation-delay: 0.4s">
+        <label style="font-size: 9px; font-weight: 800; color: var(--text-dim); margin-bottom: 5px;">СУМА:</label>
+        <input type="number" id="amount" value="1.00" oninput="calculate()">
+    </div>
+
+    <div class="animate-item" style="text-align: left; margin-bottom: 15px; animation-delay: 0.5s">
+        <label style="font-size: 9px; font-weight: 800; color: var(--text-dim); margin-bottom: 5px; display: block;">ОТ ВАЛУТА:</label>
+        <select id="fromCurr" onchange="calculate()"></select>
+    </div>
+
+    <button class="swap-btn animate-item" onclick="swapCurrencies()" style="animation-delay: 0.55s">⇄</button>
+
+    <div class="animate-item" style="text-align: left; margin-top: 15px; animation-delay: 0.6s">
+        <label style="font-size: 9px; font-weight: 800; color: var(--text-dim); margin-bottom: 5px; display: block;">КЪМ ВАЛУТА:</label>
+        <select id="toCurr" onchange="calculate()"></select>
+    </div>
+
+    <div class="result-section animate-item" style="animation-delay: 0.7s">
+        <div id="conversion-text" style="font-size: 13px; color: var(--text-dim);">1,00 BGN =</div>
+        <div class="result-value" id="result-display">0,51 EUR</div>
+    </div>
+
+    <footer class="animate-item" style="margin-top: 30px; border-top: 1px solid var(--card-border); padding-top: 20px; animation-delay: 0.8s">
+        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">© 2026 yordanowz.com</div>
+        <a href="https://yordanowz.com/" class="nav-btn">🏠 Към Yordanowz Hub</a>
+    </footer>
+</div>
+
+<script>
+    const API_KEY = "ba8d57900ea6ea5d479146af"; 
+    let rates = {};
+
+    function toggleTheme() {
+        const body = document.body;
+        const next = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    }
+    document.body.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+
+    async function init() {
+        try {
+            const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/BGN`);
+            const data = await response.json();
+            if (data.result === "success") {
+                rates = data.conversion_rates;
+                const fromS = document.getElementById('fromCurr'), toS = document.getElementById('toCurr');
+                Object.keys(rates).forEach(c => {
+                    fromS.add(new Option(c, c));
+                    toS.add(new Option(c, c));
+                });
+                fromS.value = "BGN"; toS.value = "EUR";
+                calculate();
+            }
+        } catch (e) { console.log("Offline"); }
+    }
+
+    function calculate() {
+        const amt = parseFloat(document.getElementById('amount').value) || 0;
+        const from = document.getElementById('fromCurr').value, to = document.getElementById('toCurr').value;
+        if (rates[from] && rates[to]) {
+            const result = (amt / rates[from]) * rates[to];
+            const fmt = (n) => n.toLocaleString('bg-BG', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('conversion-text').innerText = `${fmt(amt)} ${from} =`;
+            document.getElementById('result-display').innerText = `${fmt(result)} ${to}`;
+        }
+    }
+
+    function swapCurrencies() {
+        const f = document.getElementById('fromCurr'), t = document.getElementById('toCurr');
+        [f.value, t.value] = [t.value, f.value];
+        calculate();
+    }
+
+    function setQuick(f, t) {
+        document.getElementById('fromCurr').value = f;
+        document.getElementById('toCurr').value = t;
+        calculate();
+    }
+
+    init();
+</script>
+</body>
+</html>
