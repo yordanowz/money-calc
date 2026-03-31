@@ -13,12 +13,12 @@
     <meta name="apple-mobile-web-app-title" content="moneycheck" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <meta name="description" content="Yordanowz Calculator." />
+    <meta name="description" content="Бърз и лесен валутен калкулатор в реално време. Провери курсовете на BGN, EUR, USD и над 160 други валути." />
     <link rel="canonical" href="https://yordanow.online/">
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://yordanow.online/" />
-    <meta property="og:title" content="yordanowz" />
-    <meta property="og:description" content="Calculator Money Maker." />
+    <meta property="og:title" content="Yordanow Money Maker" />
+    <meta property="og:description" content="Yordanowz Calculator." />
     <meta property="og:image" content="https://yordanow.online/logo.png" />
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -194,7 +194,7 @@
     </div>
 
     <footer class="animate-item" style="margin-top: 30px; border-top: 1px solid var(--card-border); padding-top: 20px; animation-delay: 0.8s">
-        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">© 2026 yordanowz.com</div>
+        <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">© 2026 yordanow.online</div>
         <a href="https://yordanowz.com/" class="nav-btn">🏠 Към Yordanowz Hub</a>
     </footer>
 </div>
@@ -218,10 +218,13 @@
             if (data.result === "success") {
                 rates = data.conversion_rates;
                 const fromS = document.getElementById('fromCurr'), toS = document.getElementById('toCurr');
-                Object.keys(rates).forEach(c => {
+                
+                // ВЕЧЕ В АЗБУЧЕН РЕД (A-Z)
+                Object.keys(rates).sort().forEach(c => {
                     fromS.add(new Option(c, c));
                     toS.add(new Option(c, c));
                 });
+                
                 fromS.value = "BGN"; toS.value = "EUR";
                 calculate();
             }
@@ -241,7 +244,9 @@
 
     function swapCurrencies() {
         const f = document.getElementById('fromCurr'), t = document.getElementById('toCurr');
-        [f.value, t.value] = [t.value, f.value];
+        const temp = f.value;
+        f.value = t.value;
+        t.value = temp;
         calculate();
     }
 
